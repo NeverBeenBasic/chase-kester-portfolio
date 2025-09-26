@@ -757,19 +757,286 @@
                 flex-direction: column;
                 align-items: center;
             }
+
+            /* Hide network visualizer on mobile */
+            .visualizer-container {
+                display: none;
+            }
+
+            .mobile-message {
+                display: block;
+            }
+
+            .visualizer-legend {
+                display: none;
+            }
         }
 
-        /* Matrix effect */
-        .matrix {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 2;
-            opacity: 0.1;
+        /* Network Visualizer Section */
+        .visualizer-container {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            padding: 2rem;
+            margin-top: 2rem;
         }
+
+        .mobile-message {
+            display: none;
+            text-align: center;
+            padding: 3rem 2rem;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            margin-top: 2rem;
+        }
+
+        .mobile-message h3 {
+            color: #00ff88;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .mobile-message p {
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+
+        .mobile-message .btn {
+            background: transparent;
+            border: 2px solid #00ff88;
+            color: #00ff88;
+            padding: 0.7rem 1.5rem;
+            border-radius: 5px;
+            text-decoration: none;
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+
+        .mobile-message .btn:hover {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .visualizer-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .visualizer-header h3 {
+            color: #00ff88;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .visualizer-header p {
+            color: #ccc;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .visualizer-controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .visualizer-main {
+            display: flex;
+            gap: 2rem;
+            min-height: 600px;
+        }
+
+        .network-canvas-portfolio {
+            flex: 1;
+            background: radial-gradient(circle at center, #0f0f23 0%, #000 100%);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 5px;
+            position: relative;
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        .visualizer-sidebar {
+            width: 250px;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            border-radius: 5px;
+            padding: 1rem;
+        }
+
+        .visualizer-sidebar h4 {
+            color: #00ff88;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        .portfolio-stats {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            padding: 1rem;
+            border-radius: 5px;
+            margin-bottom: 1.5rem;
+        }
+
+        .threat-feed-scroll {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .visualizer-legend {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .visualizer-legend .legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #ccc;
+        }
+
+        .visualizer-legend .legend-icon {
+            width: 15px;
+            height: 15px;
+            border-radius: 3px;
+            margin-right: 0.5rem;
+        }
+
+        /* VLAN zones for portfolio */
+        .vlan-zone {
+            position: absolute;
+            border: 2px dashed rgba(0, 255, 136, 0.3);
+            border-radius: 10px;
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .vlan-label {
+            position: absolute;
+            top: -15px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: #00ff88;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .external-zone { border-color: #ff4444; background: rgba(255, 68, 68, 0.05); }
+        .external-zone .vlan-label { color: #ff4444; }
+
+        .dmz-zone { border-color: #ffaa00; background: rgba(255, 170, 0, 0.05); }
+        .dmz-zone .vlan-label { color: #ffaa00; }
+
+        .cde-zone { border-color: #ff00ff; background: rgba(255, 0, 255, 0.05); }
+        .cde-zone .vlan-label { color: #ff00ff; }
+
+        /* Network nodes for portfolio */
+        .portfolio-node {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            border-radius: 6px;
+            border: 2px solid #00ff88;
+            background: rgba(0, 255, 136, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.6rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-weight: bold;
+            font-family: 'Courier New', monospace;
+        }
+
+        .portfolio-node:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px #00ff88;
+        }
+
+        .portfolio-node.dc {
+            background: rgba(138, 43, 226, 0.3);
+            border-color: #8a2be2;
+            color: #8a2be2;
+        }
+
+        .portfolio-node.edge-firewall {
+            background: rgba(255, 69, 0, 0.3);
+            border-color: #ff4500;
+            color: #ff4500;
+            width: 50px;
+            height: 30px;
+        }
+
+        .portfolio-node.firewall {
+            background: rgba(255, 165, 0, 0.3);
+            border-color: #ffa500;
+            color: #ffa500;
+        }
+
+        .portfolio-node.server {
+            background: rgba(0, 150, 255, 0.3);
+            border-color: #0096ff;
+            color: #0096ff;
+        }
+
+        .portfolio-node.endpoint {
+            background: rgba(0, 255, 136, 0.3);
+            border-color: #00ff88;
+            color: #00ff88;
+        }
+
+        .portfolio-node.compromised {
+            background: rgba(255, 68, 68, 0.3);
+            border-color: #ff4444;
+            color: #ff4444;
+            animation: pulse 1s infinite;
+        }
+
+        .portfolio-node.scanning {
+            animation: scan 2s infinite;
+        }
+
+        .portfolio-connection {
+            position: absolute;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.5), transparent);
+            transform-origin: left;
+        }
+
+        .portfolio-connection.active {
+            animation: dataFlow 2s infinite;
+        }
+
+        .portfolio-connection.attack {
+            background: linear-gradient(90deg, transparent, #ff4444, transparent);
+            animation: attackFlow 1s infinite;
+        }
+
+        /* Portfolio log entries */
+        .portfolio-log-entry {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            padding: 0.5rem;
+            margin-bottom: 0.5rem;
+            border-radius: 3px;
+            font-size: 0.7rem;
+            animation: fadeIn 0.5s ease;
+            font-family: 'Courier New', monospace;
+        }
+
+        .portfolio-log-entry.threat-high { border-color: #ff4444; background: rgba(255, 68, 68, 0.1); }
+        .portfolio-log-entry.threat-medium { border-color: #ffaa00; background: rgba(255, 170, 0, 0.1); }
+        .portfolio-log-entry.threat-low { border-color: #00ff88; background: rgba(0, 255, 136, 0.1); }
     </style>
 </head>
 <body>
@@ -789,6 +1056,7 @@
                 <li><a href="#skills">Skills</a></li>
                 <li><a href="#experience">Experience</a></li>
                 <li><a href="#certifications">Certifications</a></li>
+                <li><a href="#network-visualizer">Network Demo</a></li>
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
@@ -1068,7 +1336,90 @@
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Network Visualizer Section -->
+    <section id="network-visualizer">
+        <div class="container">
+            <h2 class="section-title">Network Security Visualizer</h2>
+            
+            <!-- Desktop Version -->
+            <div class="visualizer-container">
+                <div class="visualizer-header">
+                    <h3>Interactive Enterprise Network Security Dashboard</h3>
+                    <p>Real-time network topology visualization with threat simulation capabilities. This tool demonstrates network segmentation, VLAN architecture, and attack propagation patterns across enterprise infrastructure.</p>
+                    <div class="visualizer-controls">
+                        <button class="btn" id="portScanBtn">Port Scan</button>
+                        <button class="btn" id="attackBtn">Simulate Attack</button>
+                        <button class="btn" id="resetBtn">Reset Network</button>
+                        <div class="status" id="networkStatus">Network Secure</div>
+                    </div>
+                </div>
+                
+                <div class="visualizer-main">
+                    <div class="network-canvas-portfolio" id="portfolioCanvas">
+                        <!-- Network topology will be generated here -->
+                    </div>
+                    
+                    <div class="visualizer-sidebar">
+                        <h4>Network Statistics</h4>
+                        <div class="portfolio-stats">
+                            <div class="stat-item">
+                                <span>Total Nodes:</span>
+                                <span id="portfolioNodeCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Active Connections:</span>
+                                <span id="portfolioConnectionCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Threats Detected:</span>
+                                <span id="portfolioThreatCount">0</span>
+                            </div>
+                            <div class="stat-item">
+                                <span>Security Level:</span>
+                                <span id="portfolioSecurityLevel">HIGH</span>
+                            </div>
+                        </div>
+                        
+                        <h4>Threat Intelligence Feed</h4>
+                        <div id="portfolioThreatFeed" class="threat-feed-scroll">
+                            <!-- Threat logs will appear here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="visualizer-legend">
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: rgba(0, 255, 136, 0.3); border: 2px solid #00ff88;"></div>
+                        <span>Endpoint</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: rgba(0, 150, 255, 0.3); border: 2px solid #0096ff;"></div>
+                        <span>Server</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: rgba(138, 43, 226, 0.3); border: 2px solid #8a2be2;"></div>
+                        <span>Domain Controller</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: rgba(255, 165, 0, 0.3); border: 2px solid #ffa500;"></div>
+                        <span>Firewall</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-icon" style="background: rgba(255, 68, 68, 0.3); border: 2px solid #ff4444;"></div>
+                        <span>Compromised</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Mobile Message -->
+            <div class="mobile-message">
+                <h3>📱 Network Visualizer</h3>
+                <p>The interactive network security demonstration is optimized for desktop viewing. For the full experience with real-time threat simulation and network topology visualization, please visit this portfolio on a desktop or laptop.</p>
+                <p style="font-size: 0.9rem; margin-top: 1.5rem;">This tool demonstrates enterprise network architecture, VLAN segmentation, and cybersecurity attack scenarios across multiple security zones.</p>
+                <a href="mailto:chaseakester@yahoo.com" class="btn">Contact for Demo</a>
+            </div>
+        </div>
+    </section>
     <section id="contact" class="contact">
         <div class="container">
             <h2 class="section-title">Contact Me</h2>
@@ -1117,7 +1468,54 @@
         </div>
     </section>
 
-    <!-- Footer -->
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Me</h2>
+            <div class="contact-grid">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <i class="fas fa-envelope"></i>
+                        <div>
+                            <h4>Email</h4>
+                            <p>chaseakester@yahoo.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fab fa-linkedin"></i>
+                        <div>
+                            <h4>LinkedIn</h4>
+                            <p>linkedin.com/in/chasekester</p>
+                        </div>
+                    </div>
+                    <div class="contact-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <div>
+                            <h4>Location</h4>
+                            <p>Scranton, PA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form>
+                        <div class="form-group">
+                            <input type="text" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" placeholder="Subject" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea rows="5" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%;">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
     <footer>
         <div class="container">
             <p>&copy; 2025 Chase Kester. All rights reserved.</p>
@@ -1323,7 +1721,241 @@
             }, 2000);
         }
 
-        // Initialize everything
+        // Portfolio Network Visualizer Class
+        class PortfolioNetworkVisualizer {
+            constructor() {
+                this.canvas = document.getElementById('portfolioCanvas');
+                this.nodes = [];
+                this.connections = [];
+                this.threatCount = 0;
+                this.isScanning = false;
+                
+                if (this.canvas) {
+                    this.initializeNetwork();
+                    this.updateStats();
+                }
+            }
+
+            initializeNetwork() {
+                // Create VLAN zones
+                this.createVLANZones();
+                
+                // Smaller scale network topology for portfolio
+                const nodeTypes = [
+                    // External
+                    { type: 'endpoint', x: 60, y: 60, label: 'ATT', zone: 'external' },
+                    { type: 'edge-firewall', x: 180, y: 80, label: 'EDGE', zone: 'external' },
+                    
+                    // DMZ
+                    { type: 'server', x: 300, y: 60, label: 'WEB1', zone: 'dmz' },
+                    { type: 'server', x: 360, y: 60, label: 'WEB2', zone: 'dmz' },
+                    { type: 'firewall', x: 420, y: 80, label: 'FW', zone: 'dmz' },
+                    
+                    // Internal
+                    { type: 'dc', x: 120, y: 180, label: 'DC01', zone: 'internal' },
+                    { type: 'dc', x: 180, y: 180, label: 'DC02', zone: 'internal' },
+                    { type: 'server', x: 270, y: 160, label: 'SQL1', zone: 'internal' },
+                    { type: 'server', x: 270, y: 220, label: 'FILE', zone: 'internal' },
+                    { type: 'endpoint', x: 100, y: 280, label: 'PC1', zone: 'internal' },
+                    { type: 'endpoint', x: 160, y: 280, label: 'PC2', zone: 'internal' },
+                    { type: 'endpoint', x: 220, y: 280, label: 'PC3', zone: 'internal' },
+                    
+                    // CDE
+                    { type: 'firewall', x: 480, y: 180, label: 'CDE', zone: 'cde' },
+                    { type: 'server', x: 540, y: 160, label: 'PAY1', zone: 'cde' },
+                    { type: 'endpoint', x: 520, y: 220, label: 'POS', zone: 'cde' }
+                ];
+
+                nodeTypes.forEach((nodeData, index) => {
+                    this.createNode(nodeData, index);
+                });
+
+                this.createNetworkConnections();
+                this.startDataFlow();
+            }
+
+            createVLANZones() {
+                const zones = [
+                    { name: 'EXTERNAL', x: 30, y: 30, width: 200, height: 80, class: 'external-zone' },
+                    { name: 'DMZ', x: 270, y: 30, width: 180, height: 80, class: 'dmz-zone' },
+                    { name: 'INTERNAL', x: 60, y: 130, width: 280, height: 180, class: 'vlan-zone' },
+                    { name: 'CDE', x: 460, y: 130, width: 120, height: 120, class: 'cde-zone' }
+                ];
+
+                zones.forEach(zone => {
+                    const zoneDiv = document.createElement('div');
+                    zoneDiv.className = `vlan-zone ${zone.class}`;
+                    zoneDiv.style.left = zone.x + 'px';
+                    zoneDiv.style.top = zone.y + 'px';
+                    zoneDiv.style.width = zone.width + 'px';
+                    zoneDiv.style.height = zone.height + 'px';
+                    
+                    const label = document.createElement('div');
+                    label.className = 'vlan-label';
+                    label.textContent = zone.name;
+                    zoneDiv.appendChild(label);
+                    
+                    this.canvas.appendChild(zoneDiv);
+                });
+            }
+
+            createNode(nodeData, id) {
+                const node = document.createElement('div');
+                node.className = `portfolio-node ${nodeData.type}`;
+                node.style.left = nodeData.x + 'px';
+                node.style.top = nodeData.y + 'px';
+                node.textContent = nodeData.label;
+                node.dataset.id = id;
+                node.dataset.type = nodeData.type;
+                
+                this.canvas.appendChild(node);
+                this.nodes.push({ element: node, data: nodeData, id: id });
+            }
+
+            createNetworkConnections() {
+                const connections = [
+                    [0, 1], [1, 2], [1, 3], [2, 4], [3, 4], [4, 5], [4, 6],
+                    [5, 6], [5, 7], [6, 8], [7, 9], [7, 10], [8, 11],
+                    [8, 12], [12, 13], [13, 14]
+                ];
+
+                connections.forEach(([fromId, toId]) => {
+                    this.createConnection(fromId, toId);
+                });
+            }
+
+            createConnection(fromId, toId) {
+                const fromNode = this.nodes[fromId];
+                const toNode = this.nodes[toId];
+                
+                const fromX = fromNode.data.x + 20;
+                const fromY = fromNode.data.y + 20;
+                const toX = toNode.data.x + 20;
+                const toY = toNode.data.y + 20;
+                
+                const distance = Math.sqrt(Math.pow(toX - fromX, 2) + Math.pow(toY - fromY, 2));
+                const angle = Math.atan2(toY - fromY, toX - fromX) * 180 / Math.PI;
+                
+                const connection = document.createElement('div');
+                connection.className = 'portfolio-connection active';
+                connection.style.left = fromX + 'px';
+                connection.style.top = fromY + 'px';
+                connection.style.width = distance + 'px';
+                connection.style.transform = `rotate(${angle}deg)`;
+                
+                this.canvas.appendChild(connection);
+                this.connections.push({ element: connection, from: fromId, to: toId });
+            }
+
+            startDataFlow() {
+                setInterval(() => {
+                    this.connections.forEach(conn => {
+                        if (Math.random() > 0.7) {
+                            conn.element.style.animation = 'none';
+                            setTimeout(() => {
+                                conn.element.style.animation = 'dataFlow 2s infinite';
+                            }, 10);
+                        }
+                    });
+                }, 3000);
+            }
+
+            startPortScan() {
+                if (this.isScanning) return;
+                
+                this.isScanning = true;
+                document.getElementById('networkStatus').textContent = 'Port Scanning Active';
+                
+                this.nodes.forEach((node, index) => {
+                    setTimeout(() => {
+                        node.element.classList.add('scanning');
+                        this.addThreatLog(`Port scan on ${node.data.label}: Open ports detected`, 'low');
+                        
+                        setTimeout(() => {
+                            node.element.classList.remove('scanning');
+                        }, 1500);
+                    }, index * 300);
+                });
+
+                setTimeout(() => {
+                    this.isScanning = false;
+                    document.getElementById('networkStatus').textContent = 'Port Scan Complete';
+                }, this.nodes.length * 300 + 1500);
+            }
+
+            simulateAttack() {
+                const targetIndex = Math.floor(Math.random() * this.nodes.length);
+                const targetNode = this.nodes[targetIndex];
+                
+                setTimeout(() => {
+                    targetNode.element.classList.add('compromised');
+                    
+                    this.connections.forEach(conn => {
+                        if (conn.from === targetIndex || conn.to === targetIndex) {
+                            conn.element.classList.add('attack');
+                        }
+                    });
+
+                    this.threatCount++;
+                    this.addThreatLog(`CRITICAL: ${targetNode.data.label} compromised`, 'high');
+                    this.addThreatLog(`WARNING: Lateral movement detected`, 'medium');
+                    
+                    document.getElementById('networkStatus').textContent = 'SECURITY BREACH DETECTED';
+                    this.updateStats();
+                }, 1000);
+            }
+
+            resetNetwork() {
+                this.nodes.forEach(node => {
+                    node.element.classList.remove('compromised', 'scanning');
+                });
+
+                this.connections.forEach(conn => {
+                    conn.element.classList.remove('attack');
+                    conn.element.classList.add('active');
+                });
+
+                document.getElementById('portfolioThreatFeed').innerHTML = '';
+                
+                this.threatCount = 0;
+                document.getElementById('networkStatus').textContent = 'Network Secure';
+                this.updateStats();
+            }
+
+            addThreatLog(message, severity) {
+                const threatFeed = document.getElementById('portfolioThreatFeed');
+                const logEntry = document.createElement('div');
+                logEntry.className = `portfolio-log-entry threat-${severity}`;
+                
+                const timestamp = new Date().toLocaleTimeString();
+                logEntry.innerHTML = `
+                    <div style="font-weight: bold;">[${timestamp}] ${severity.toUpperCase()}</div>
+                    <div>${message}</div>
+                `;
+                
+                threatFeed.insertBefore(logEntry, threatFeed.firstChild);
+                
+                while (threatFeed.children.length > 8) {
+                    threatFeed.removeChild(threatFeed.lastChild);
+                }
+            }
+
+            updateStats() {
+                document.getElementById('portfolioNodeCount').textContent = this.nodes.length;
+                document.getElementById('portfolioConnectionCount').textContent = this.connections.length;
+                document.getElementById('portfolioThreatCount').textContent = this.threatCount;
+                
+                const securityLevel = this.threatCount === 0 ? 'HIGH' : 
+                                    this.threatCount < 2 ? 'MEDIUM' : 'LOW';
+                const levelElement = document.getElementById('portfolioSecurityLevel');
+                levelElement.textContent = securityLevel;
+                levelElement.style.color = 
+                    securityLevel === 'HIGH' ? '#00ff88' : 
+                    securityLevel === 'MEDIUM' ? '#ffaa00' : '#ff4444';
+            }
+        }
+
+        // Initialize portfolio network visualizer when page loads
         document.addEventListener('DOMContentLoaded', function() {
             initThreeJS();
             animateTerminal();
@@ -1334,6 +1966,32 @@
             const subtitle = document.querySelector('.typing-effect');
             const originalText = subtitle.textContent;
             typeWriter(subtitle, originalText, 100);
+            
+            // Initialize portfolio network visualizer
+            const portfolioNetworkViz = new PortfolioNetworkVisualizer();
+            
+            // Add event listeners for portfolio visualizer buttons
+            const portScanBtn = document.getElementById('portScanBtn');
+            const attackBtn = document.getElementById('attackBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            
+            if (portScanBtn && portfolioNetworkViz) {
+                portScanBtn.addEventListener('click', () => {
+                    portfolioNetworkViz.startPortScan();
+                });
+            }
+            
+            if (attackBtn && portfolioNetworkViz) {
+                attackBtn.addEventListener('click', () => {
+                    portfolioNetworkViz.simulateAttack();
+                });
+            }
+            
+            if (resetBtn && portfolioNetworkViz) {
+                resetBtn.addEventListener('click', () => {
+                    portfolioNetworkViz.resetNetwork();
+                });
+            }
         });
         
         // Handle window resize
