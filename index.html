@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chase Kester - Cybersecurity Engineer</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -16,13 +17,51 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 100%);
+            background: #0a0a0a;
+            cursor: none;
+        }
+
+        /* Custom Cursor */
+        .cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #00ff88;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            transition: all 0.1s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            background: #00ff88;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            opacity: 0;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* 3D Background */
+        #threejs-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            opacity: 0.7;
         }
 
         /* Header */
@@ -34,6 +73,7 @@
             top: 0;
             z-index: 1000;
             padding: 1rem 0;
+            border-bottom: 1px solid rgba(0, 255, 136, 0.3);
         }
 
         nav {
@@ -46,6 +86,7 @@
             font-size: 1.5rem;
             font-weight: bold;
             color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
         }
 
         .nav-links {
@@ -57,11 +98,29 @@
         .nav-links a {
             color: white;
             text-decoration: none;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            position: relative;
         }
 
         .nav-links a:hover {
             color: #00ff88;
+            text-shadow: 0 0 10px #00ff88;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #00ff88;
+            transition: width 0.3s ease;
+            box-shadow: 0 0 5px #00ff88;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
         }
 
         /* Hero Section */
@@ -76,29 +135,29 @@
             overflow: hidden;
         }
 
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><defs><pattern id="grid" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 50 0 L 0 0 0 50" fill="none" stroke="%2300ff8820" stroke-width="1"/></pattern></defs><rect width="100%" height="100%" fill="url(%23grid)"/></svg>') repeat;
-            opacity: 0.1;
-        }
-
         .hero-content {
             position: relative;
-            z-index: 1;
+            z-index: 10;
         }
 
         .hero h1 {
             font-size: 3.5rem;
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, #00ff88, #0099ff);
+            background: linear-gradient(45deg, #00ff88, #0099ff, #00ff88, #0099ff);
+            background-size: 300% 300%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            animation: gradientShift 4s ease-in-out infinite;
+        }
+
+        .hero .tagline {
+            font-size: 1.2rem;
+            color: #00ff88;
+            margin: 0.5rem 0 1rem 0;
+            font-weight: 500;
+            text-shadow: 0 0 10px #00ff88;
+            animation: pulse 2s infinite;
         }
 
         .hero .subtitle {
@@ -107,11 +166,17 @@
             opacity: 0.9;
         }
 
+        .typing-effect {
+            border-right: 3px solid #00ff88;
+            animation: blink 1s infinite;
+        }
+
         .cta-buttons {
             display: flex;
             gap: 1rem;
             justify-content: center;
             flex-wrap: wrap;
+            margin-top: 2rem;
         }
 
         .btn {
@@ -123,18 +188,20 @@
             border-radius: 50px;
             transition: all 0.3s ease;
             font-weight: 500;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn:hover {
             background: #00ff88;
-            color: #0f0f23;
+            color: #0a0a0a;
             transform: translateY(-2px);
             box-shadow: 0 10px 25px rgba(0, 255, 136, 0.3);
         }
 
         .btn-primary {
             background: #00ff88;
-            color: #0f0f23;
+            color: #0a0a0a;
         }
 
         .btn-primary:hover {
@@ -142,22 +209,66 @@
             color: #00ff88;
         }
 
+        /* Terminal */
+        .terminal {
+            background: rgba(0, 0, 0, 0.9);
+            border: 1px solid #00ff88;
+            border-radius: 10px;
+            padding: 1rem;
+            margin: 2rem 0;
+            font-family: 'Courier New', monospace;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .terminal-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .terminal-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .terminal-dot.red { background: #ff5f57; }
+        .terminal-dot.yellow { background: #febc2e; }
+        .terminal-dot.green { background: #28ca42; }
+
+        .terminal-content {
+            color: #00ff88;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .terminal-line {
+            margin-bottom: 0.5rem;
+            opacity: 0;
+            animation: fadeInUp 0.5s forwards;
+        }
+
         /* Sections */
         section {
             padding: 80px 0;
-            background: white;
+            background: rgba(10, 10, 10, 0.95);
+            position: relative;
+            z-index: 10;
         }
 
         section:nth-child(even) {
-            background: #f8f9fa;
+            background: rgba(15, 15, 25, 0.95);
         }
 
         .section-title {
             text-align: center;
             font-size: 2.5rem;
             margin-bottom: 3rem;
-            color: #333;
+            color: white;
             position: relative;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
         .section-title::after {
@@ -169,6 +280,7 @@
             width: 80px;
             height: 3px;
             background: linear-gradient(45deg, #00ff88, #0099ff);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
         /* About Section */
@@ -189,18 +301,24 @@
             border-radius: 50%;
             border: 4px solid #00ff88;
             object-fit: cover;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .profile-img:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 50px rgba(0, 255, 136, 0.5);
         }
 
         .about-text h3 {
             font-size: 1.8rem;
             margin-bottom: 1rem;
-            color: #333;
+            color: white;
         }
 
         .about-text p {
             font-size: 1.1rem;
-            color: #666;
+            color: #ccc;
             margin-bottom: 1.5rem;
         }
 
@@ -212,19 +330,39 @@
         }
 
         .skill-category {
-            background: white;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             padding: 2rem;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .skill-category::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 136, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .skill-category:hover::before {
+            left: 100%;
         }
 
         .skill-category:hover {
             transform: translateY(-5px);
+            border-color: #00ff88;
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
         }
 
         .skill-category h3 {
-            color: #333;
+            color: white;
             margin-bottom: 1rem;
             font-size: 1.3rem;
         }
@@ -236,11 +374,52 @@
         }
 
         .skill-tag {
-            background: #e9ecef;
-            color: #333;
+            background: rgba(0, 255, 136, 0.1);
+            color: #00ff88;
+            border: 1px solid rgba(0, 255, 136, 0.3);
             padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .skill-tag:hover {
+            background: rgba(0, 255, 136, 0.2);
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        /* Progress Bars */
+        .skill-progress {
+            margin-top: 1rem;
+        }
+
+        .progress-item {
+            margin-bottom: 1rem;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(45deg, #00ff88, #0099ff);
+            border-radius: 4px;
+            width: 0%;
+            transition: width 2s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
         }
 
         /* Experience Section */
@@ -251,17 +430,24 @@
         }
 
         .experience-item {
-            background: white;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             padding: 2rem;
             margin-bottom: 2rem;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
             position: relative;
             border-left: 4px solid #00ff88;
+            transition: all 0.3s ease;
+        }
+
+        .experience-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.2);
         }
 
         .experience-item h3 {
-            color: #333;
+            color: white;
             font-size: 1.4rem;
             margin-bottom: 0.5rem;
         }
@@ -273,9 +459,13 @@
         }
 
         .experience-item .date {
-            color: #666;
+            color: #ccc;
             font-size: 0.9rem;
             margin-bottom: 1rem;
+        }
+
+        .experience-item p {
+            color: #ccc;
         }
 
         /* Certifications */
@@ -286,37 +476,59 @@
         }
 
         .cert-item {
-            background: white;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             padding: 1.5rem;
             border-radius: 10px;
             text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cert-item::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cert-item:hover::before {
+            opacity: 1;
         }
 
         .cert-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-5px) rotateY(10deg);
+            border-color: #00ff88;
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.3);
         }
 
         .cert-item i {
             font-size: 2.5rem;
             color: #00ff88;
             margin-bottom: 1rem;
+            text-shadow: 0 0 10px #00ff88;
         }
 
         .cert-item h4 {
-            color: #333;
+            color: white;
             margin-bottom: 0.5rem;
         }
 
         .cert-item .issuer {
-            color: #666;
+            color: #ccc;
             font-size: 0.9rem;
         }
 
         /* Contact Section */
         .contact {
-            background: #0f0f23;
+            background: rgba(0, 0, 0, 0.95);
             color: white;
         }
 
@@ -337,19 +549,30 @@
             display: flex;
             align-items: center;
             gap: 1rem;
+            padding: 1rem;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-item:hover {
+            background: rgba(0, 255, 136, 0.1);
+            transform: translateX(10px);
         }
 
         .contact-item i {
             color: #00ff88;
             font-size: 1.5rem;
             width: 30px;
+            text-shadow: 0 0 10px #00ff88;
         }
 
         .contact-form {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(0, 255, 136, 0.3);
             padding: 2rem;
             border-radius: 10px;
             backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
         }
 
         .form-group {
@@ -360,15 +583,23 @@
         .form-group textarea {
             width: 100%;
             padding: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.3);
+            background: rgba(0, 0, 0, 0.5);
             color: white;
             border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #00ff88;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
         }
 
         .form-group input::placeholder,
         .form-group textarea::placeholder {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(255, 255, 255, 0.5);
         }
 
         /* Footer */
@@ -377,10 +608,56 @@
             color: white;
             text-align: center;
             padding: 2rem 0;
+            border-top: 1px solid rgba(0, 255, 136, 0.3);
+        }
+
+        /* Animations */
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .hero-content {
+            animation: float 6s ease-in-out infinite;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
+            body {
+                cursor: auto;
+            }
+            
+            .cursor, .cursor-trail {
+                display: none;
+            }
+
             .nav-links {
                 display: none;
             }
@@ -404,18 +681,26 @@
             }
         }
 
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .hero-content {
-            animation: float 6s ease-in-out infinite;
+        /* Matrix effect */
+        .matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0.1;
         }
     </style>
 </head>
 <body>
+    <!-- Custom Cursor -->
+    <div class="cursor"></div>
+    
+    <!-- 3D Background -->
+    <div id="threejs-bg"></div>
+
     <!-- Header -->
     <header>
         <nav class="container">
@@ -435,8 +720,8 @@
     <section id="home" class="hero">
         <div class="hero-content">
             <h1>Chase Kester</h1>
-            <p style="font-size: 1.2rem; color: #00ff88; margin: 0.5rem 0 1rem 0; font-weight: 500;">Trust No Packet</p>
-            <p class="subtitle">Cybersecurity Engineer with a focus on cloud security</p>
+            <p class="tagline">Trust No Packet</p>
+            <p class="subtitle typing-effect">Cybersecurity Engineer with a focus on cloud security</p>
             <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.8;">Microsoft Defender • Azure Security • Automation • Security Awareness</p>
             <div class="cta-buttons">
                 <a href="#contact" class="btn btn-primary">Get In Touch</a>
@@ -451,19 +736,38 @@
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-image">
-                    <div class="profile-img" style="background: linear-gradient(45deg, #00ff88, #0099ff); display: flex; align-items: center; justify-content: center; font-size: 4rem; color: white;">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
+                    <img src="chase-kester-photo.jpg" alt="Chase Kester" class="profile-img">
                 </div>
                 <div class="about-text">
                     <h3>Cybersecurity Engineer</h3>
                     <p>I am a cloud-focused Cybersecurity Administrator with 3+ years of experience in security operations and incident response across both on-premises and cloud environments. I have hands-on expertise securing hybrid infrastructures using Microsoft Defender, Intune, Azure AD, Sentinel, and comprehensive SIEM/EDR/DLP solutions.</p>
                     <p>As an analytical thinker with strong problem-solving skills, I excel at monitoring and responding to security incidents, tuning detection logic, and building automated SOAR workflows. I'm passionate about driving measurable risk reduction through technical solutions while effectively communicating findings to both technical and non-technical audiences in fast-moving environments.</p>
+                    
+                    <!-- Terminal Simulator -->
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="terminal-dot red"></div>
+                            <div class="terminal-dot yellow"></div>
+                            <div class="terminal-dot green"></div>
+                        </div>
+                        <div class="terminal-content" id="terminal-output">
+                            <div class="terminal-line">$ whoami</div>
+                            <div class="terminal-line">chase_kester</div>
+                            <div class="terminal-line">$ cat /etc/skills</div>
+                            <div class="terminal-line">PowerShell, Azure, Incident Response, Threat Hunting</div>
+                            <div class="terminal-line">$ ps aux | grep passion</div>
+                            <div class="terminal-line">cybersecurity    1337  0.0  0.1  protecting_digital_assets</div>
+                            <div class="terminal-line">$ echo "Trust No Packet"</div>
+                            <div class="terminal-line">Trust No Packet</div>
+                            <div class="terminal-line">$ <span class="typing-cursor">█</span></div>
+                        </div>
+                    </div>
+
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                        <a href="https://linkedin.com/in/chasekester" class="btn" style="color: #333; border-color: #333;">
+                        <a href="https://linkedin.com/in/chasekester" class="btn" style="color: #00ff88; border-color: #00ff88;">
                             <i class="fab fa-linkedin"></i> LinkedIn
                         </a>
-                        <a href="mailto:chaseakester@yahoo.com" class="btn" style="color: #333; border-color: #333;">
+                        <a href="mailto:chaseakester@yahoo.com" class="btn" style="color: #00ff88; border-color: #00ff88;">
                             <i class="fas fa-envelope"></i> Email Me
                         </a>
                     </div>
@@ -487,6 +791,26 @@
                         <span class="skill-tag">Identity Logs Analysis</span>
                         <span class="skill-tag">Jira Workflows</span>
                     </div>
+                    <div class="skill-progress">
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Microsoft Defender</span>
+                                <span>95%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="95"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Incident Response</span>
+                                <span>90%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="90"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="skill-category">
                     <h3><i class="fas fa-code"></i> Automation & Scripting</h3>
@@ -497,6 +821,26 @@
                         <span class="skill-tag">Detection Tuning</span>
                         <span class="skill-tag">Ansible</span>
                         <span class="skill-tag">Bash</span>
+                    </div>
+                    <div class="skill-progress">
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>PowerShell</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="92"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Azure Logic Apps</span>
+                                <span>88%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="88"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <div class="skill-category">
@@ -509,6 +853,26 @@
                         <span class="skill-tag">Linux Environments</span>
                         <span class="skill-tag">Hybrid Cloud Security</span>
                     </div>
+                    <div class="skill-progress">
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Azure Security</span>
+                                <span>89%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="89"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Cloud Security</span>
+                                <span>85%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="85"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div class="skill-category">
                     <h3><i class="fas fa-users"></i> Frameworks & Compliance</h3>
@@ -519,6 +883,26 @@
                         <span class="skill-tag">PCI DSS</span>
                         <span class="skill-tag">GDPR</span>
                         <span class="skill-tag">Security Awareness</span>
+                    </div>
+                    <div class="skill-progress">
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Compliance Frameworks</span>
+                                <span>87%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="87"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Risk Assessment</span>
+                                <span>83%</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill" data-width="83"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -604,7 +988,7 @@
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
-            <h2 class="section-title" style="color: white;">Contact Me</h2>
+            <h2 class="section-title">Contact Me</h2>
             <div class="contact-grid">
                 <div class="contact-info">
                     <div class="contact-item">
@@ -658,6 +1042,153 @@
     </footer>
 
     <script>
+        // Custom Cursor
+        let cursor = document.querySelector('.cursor');
+        let trails = [];
+        
+        // Create cursor trails
+        for (let i = 0; i < 10; i++) {
+            let trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            document.body.appendChild(trail);
+            trails.push(trail);
+        }
+        
+        let mouseX = 0, mouseY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            cursor.style.left = mouseX + 'px';
+            cursor.style.top = mouseY + 'px';
+            
+            // Animate trails
+            trails.forEach((trail, index) => {
+                setTimeout(() => {
+                    trail.style.left = mouseX + 'px';
+                    trail.style.top = mouseY + 'px';
+                    trail.style.opacity = (10 - index) / 10;
+                }, index * 20);
+            });
+        });
+
+        // Three.js 3D Background
+        let scene, camera, renderer, particles;
+        
+        function initThreeJS() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            renderer = new THREE.WebGLRenderer({ alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.getElementById('threejs-bg').appendChild(renderer.domElement);
+            
+            // Create particle system
+            const geometry = new THREE.BufferGeometry();
+            const particlesCount = 100;
+            const positions = new Float32Array(particlesCount * 3);
+            const colors = new Float32Array(particlesCount * 3);
+            
+            for (let i = 0; i < particlesCount * 3; i += 3) {
+                positions[i] = (Math.random() - 0.5) * 20;
+                positions[i + 1] = (Math.random() - 0.5) * 20;
+                positions[i + 2] = (Math.random() - 0.5) * 20;
+                
+                colors[i] = 0;
+                colors[i + 1] = 1;
+                colors[i + 2] = 0.5;
+            }
+            
+            geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
+            
+            const material = new THREE.PointsMaterial({
+                size: 0.05,
+                vertexColors: true,
+                transparent: true,
+                opacity: 0.8
+            });
+            
+            particles = new THREE.Points(geometry, material);
+            scene.add(particles);
+            
+            camera.position.z = 5;
+            
+            animate();
+        }
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            particles.rotation.x += 0.001;
+            particles.rotation.y += 0.002;
+            
+            renderer.render(scene, camera);
+        }
+        
+        // Terminal Animation
+        function animateTerminal() {
+            const lines = document.querySelectorAll('.terminal-line');
+            lines.forEach((line, index) => {
+                line.style.animationDelay = `${index * 0.5}s`;
+            });
+        }
+        
+        // Progress Bar Animation
+        function animateProgressBars() {
+            const progressBars = document.querySelectorAll('.progress-fill');
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const width = entry.target.dataset.width;
+                        entry.target.style.width = width + '%';
+                    }
+                });
+            });
+            
+            progressBars.forEach(bar => {
+                observer.observe(bar);
+            });
+        }
+        
+        // Typing Effect
+        function typeWriter(element, text, speed = 50) {
+            let i = 0;
+            element.innerHTML = '';
+            
+            function type() {
+                if (i < text.length) {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                    setTimeout(type, speed);
+                }
+            }
+            
+            type();
+        }
+        
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initThreeJS();
+            animateTerminal();
+            animateProgressBars();
+            
+            // Typing effect for subtitle
+            const subtitle = document.querySelector('.typing-effect');
+            const originalText = subtitle.textContent;
+            typeWriter(subtitle, originalText, 100);
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            if (camera && renderer) {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }
+        });
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -694,6 +1225,17 @@
                 header.style.background = 'rgba(0, 0, 0, 0.9)';
             }
         });
+
+        // Parallax effect for sections
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            const parallax = document.querySelector('#threejs-bg');
+            if (parallax) {
+                const speed = scrolled * 0.5;
+                parallax.style.transform = `translateY(${speed}px)`;
+            }
+        });
     </script>
 </body>
 </html>
+                
