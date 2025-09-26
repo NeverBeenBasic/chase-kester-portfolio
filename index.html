@@ -435,6 +435,7 @@
     <section id="home" class="hero">
         <div class="hero-content">
             <h1>Chase Kester</h1>
+            <p style="font-size: 1.2rem; color: #00ff88; margin: 0.5rem 0 1rem 0; font-weight: 500;">Trust No Packet</p>
             <p class="subtitle">Cybersecurity Engineer with a focus on cloud security</p>
             <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.8;">Microsoft Defender • Azure Security • Automation • Security Awareness</p>
             <div class="cta-buttons">
@@ -455,7 +456,7 @@
                     </div>
                 </div>
                 <div class="about-text">
-                    <h3>Cloud Security Specialist</h3>
+                    <h3>Cybersecurity Engineer</h3>
                     <p>I am a cloud-focused Cybersecurity Administrator with 3+ years of experience in security operations and incident response across both on-premises and cloud environments. I have hands-on expertise securing hybrid infrastructures using Microsoft Defender, Intune, Azure AD, Sentinel, and comprehensive SIEM/EDR/DLP solutions.</p>
                     <p>As an analytical thinker with strong problem-solving skills, I excel at monitoring and responding to security incidents, tuning detection logic, and building automated SOAR workflows. I'm passionate about driving measurable risk reduction through technical solutions while effectively communicating findings to both technical and non-technical audiences in fast-moving environments.</p>
                     <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
@@ -464,9 +465,6 @@
                         </a>
                         <a href="mailto:chaseakester@yahoo.com" class="btn" style="color: #333; border-color: #333;">
                             <i class="fas fa-envelope"></i> Email Me
-                        </a>
-                        <a href="tel:570-851-7412" class="btn" style="color: #333; border-color: #333;">
-                            <i class="fas fa-phone"></i> Call Me
                         </a>
                     </div>
                 </div>
@@ -617,13 +615,6 @@
                         </div>
                     </div>
                     <div class="contact-item">
-                        <i class="fas fa-phone"></i>
-                        <div>
-                            <h4>Phone</h4>
-                            <p>(570) 851-7412</p>
-                        </div>
-                    </div>
-                    <div class="contact-item">
                         <i class="fab fa-linkedin"></i>
                         <div>
                             <h4>LinkedIn</h4>
@@ -680,7 +671,18 @@
         // Form submission handler
         document.querySelector('form').addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Message sent! (This is a demo - implement actual form handling)');
+            
+            // Get form data
+            const name = document.querySelector('input[placeholder="Your Name"]').value;
+            const email = document.querySelector('input[placeholder="Your Email"]').value;
+            const subject = document.querySelector('input[placeholder="Subject"]').value;
+            const message = document.querySelector('textarea').value;
+            
+            // Create mailto link
+            const mailtoLink = `mailto:chaseakester@yahoo.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(`From: ${name} (${email})\n\n${message}`)}`;
+            
+            // Open email client
+            window.location.href = mailtoLink;
         });
 
         // Add scroll effect to header
