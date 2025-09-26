@@ -135,6 +135,44 @@
             overflow: hidden;
         }
 
+        .animated-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .code-particle {
+            position: absolute;
+            color: rgba(0, 255, 136, 0.6);
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            white-space: nowrap;
+            animation: floatUp 15s linear infinite;
+            pointer-events: none;
+            text-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+        }
+
+        @keyframes floatUp {
+            0% {
+                opacity: 0;
+                transform: translateY(100vh) translateX(-50px);
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-100px) translateX(50px);
+            }
+        }
+
         .hero-content {
             position: relative;
             z-index: 10;
@@ -167,8 +205,11 @@
         }
 
         .typing-effect {
-            border-right: 3px solid #00ff88;
-            animation: blink 1s infinite;
+            animation: none;
+        }
+
+        .typing-cursor {
+            opacity: 0;
         }
 
         .cta-buttons {
@@ -718,6 +759,7 @@
 
     <!-- Hero Section -->
     <section id="home" class="hero">
+        <div class="animated-bg"></div>
         <div class="hero-content">
             <h1>Chase Kester</h1>
             <p class="tagline">Trust No Packet</p>
@@ -736,7 +778,10 @@
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-image">
-                    <img src="chase-kester-photo.jpg" alt="Chase Kester" class="profile-img">
+                    <img src="chase-kester-photo.jpg.png" alt="Chase Kester" class="profile-img" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="profile-img" style="background: linear-gradient(45deg, #00ff88, #0099ff); display: none; align-items: center; justify-content: center; font-size: 4rem; color: white;">
+                        <i class="fas fa-user"></i>
+                    </div>
                 </div>
                 <div class="about-text">
                     <h3>Cybersecurity Engineer</h3>
@@ -1152,27 +1197,81 @@
             });
         }
         
-        // Typing Effect
+        // Typing Effect with Loop
         function typeWriter(element, text, speed = 50) {
             let i = 0;
-            element.innerHTML = '';
             
             function type() {
                 if (i < text.length) {
-                    element.innerHTML += text.charAt(i);
+                    element.innerHTML = text.substring(0, i + 1);
                     i++;
                     setTimeout(type, speed);
+                } else {
+                    // Wait 3 seconds, then restart
+                    setTimeout(() => {
+                        element.innerHTML = '';
+                        i = 0;
+                        type();
+                    }, 3000);
                 }
             }
             
+            element.innerHTML = '';
             type();
         }
         
+        // Generate floating code particles
+        function createCodeParticles() {
+            const container = document.querySelector('.animated-bg');
+            const codeSnippets = [
+                'if (trust === false) { drop.packet(); }',
+                'firewall.activate();',
+                'access.denied();',
+                'encrypt(data);',
+                'sudo rm -rf trust',
+                'chmod 777 security',
+                'ping -c 1 localhost',
+                'netstat -an | grep LISTEN',
+                '443 SSL/TLS',
+                'GET /secure HTTP/1.1',
+                'DROP TABLE trust;',
+                'SELECT * FROM packets WHERE trust=0;',
+                'import cybersec',
+                'def hunt_threats():',
+                'azure.defender.scan()',
+                'powershell.exe -Command',
+                'nmap -sS target',
+                'wireshark.capture()',
+                'MITRE ATT&CK T1055',
+                'incident.response.activate()'
+            ];
+
+            setInterval(() => {
+                if (document.querySelectorAll('.code-particle').length < 8) {
+                    const particle = document.createElement('div');
+                    particle.className = 'code-particle';
+                    particle.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+                    particle.style.fontSize = (Math.random() * 4 + 12) + 'px';
+                    container.appendChild(particle);
+
+                    // Remove after animation
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 15000);
+                }
+            }, 2000);
+        }
+
         // Initialize everything
         document.addEventListener('DOMContentLoaded', function() {
             initThreeJS();
             animateTerminal();
             animateProgressBars();
+            createCodeParticles();
             
             // Typing effect for subtitle
             const subtitle = document.querySelector('.typing-effect');
