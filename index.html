@@ -76,6 +76,29 @@
             border-bottom: 1px solid rgba(0, 255, 136, 0.3);
         }
 
+        /* Scroll Progress Bar */
+        .scroll-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00ff88, #0099ff);
+            width: 0%;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.8), 0 0 20px rgba(0, 255, 136, 0.6);
+        }
+
+        .scroll-progress::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: progressGlow 2s ease-in-out infinite;
+        }
+
         nav {
             display: flex;
             justify-content: space-between;
@@ -688,6 +711,17 @@
             50% { transform: translateY(-20px); }
         }
 
+        @keyframes progressGlow {
+            0%, 100% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+            50% {
+                transform: translateX(100%);
+                opacity: 1;
+            }
+        }
+
         .hero-content {
             animation: float 6s ease-in-out infinite;
         }
@@ -758,6 +792,7 @@
                 <li><a href="#contact">Contact</a></li>
             </ul>
         </nav>
+        <div class="scroll-progress"></div>
     </header>
 
     <!-- Hero Section -->
@@ -767,7 +802,7 @@
             <h1>Chase Kester</h1>
             <p class="tagline">Trust No Packet</p>
             <p class="subtitle typing-effect">Cybersecurity Engineer with a focus on cloud security</p>
-            <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.8;">Microsoft Defender • Azure Security • Automation • Security Awareness</p>
+            <p style="font-size: 1.1rem; margin-bottom: 2rem; opacity: 0.8;">Vulnerability Management • Cloud & Endpoint Security • Automation • Reducing Human Risk</p>
             <div class="cta-buttons">
                 <a href="#contact" class="btn btn-primary">Get In Touch</a>
                 <a href="#about" class="btn">Learn More</a>
@@ -1337,14 +1372,25 @@
             window.location.href = mailtoLink;
         });
 
-        // Add scroll effect to header
+        // Add scroll effect to header and progress bar
         window.addEventListener('scroll', function() {
             const header = document.querySelector('header');
+            const scrollProgress = document.querySelector('.scroll-progress');
+            
+            // Header background opacity
             if (window.scrollY > 100) {
                 header.style.background = 'rgba(0, 0, 0, 0.95)';
             } else {
                 header.style.background = 'rgba(0, 0, 0, 0.9)';
             }
+            
+            // Calculate scroll progress
+            const scrollTop = window.pageYOffset;
+            const documentHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const scrollPercent = (scrollTop / documentHeight) * 100;
+            
+            // Update progress bar width
+            scrollProgress.style.width = scrollPercent + '%';
         });
 
         // Parallax effect for sections
@@ -1359,4 +1405,3 @@
     </script>
 </body>
 </html>
-                
